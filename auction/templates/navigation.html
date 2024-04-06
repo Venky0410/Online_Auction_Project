@@ -155,7 +155,7 @@
   <ul class="navbar-nav">
 
     {% if request.user.username %}
-    {% ifequal error "pat" %}
+    {% if error == "pat" %}
 
    <li class="nav-item">
       <a class="nav-link" href="{% url 'profile1' %}" style="color:black;margin-left:200px">
@@ -210,7 +210,7 @@
       <a class="nav-link" href="{% url 'change_password1' %}" style="color:black"><ion-icon style="margin-right:2px" name="document-text-sharp"></ion-icon>CHANGE PASSWORD</a>
     </li>
 </div>
-{% endifequal %}
+{% endif %}
     {% else %}
 
     <li class="nav-item">
