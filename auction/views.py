@@ -1,3 +1,4 @@
+"""VIEWS.PY"""
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
@@ -97,11 +98,21 @@ def Signup_User(request):
         reg = request.POST['reg']
         i = request.FILES['image']
         user = User.objects.create_user(email=e, username=u, password=p, first_name=f,last_name=l)
-        mem = Member_fee.objects.get(fee="Unpaid")
+        mem = Memberfee.objects.get(fee="Unpaid")
         if reg == "Bidder":
-            sign = Bidder.objects.create(membership=mem,user=user,contact=con,address=add,dob=d2,image=i)
+            sign = Bidder.objects.create(membership=mem,
+                user=user,
+                contact=con,
+                address=add,
+                dob=d2,
+                image=i)
         else:
-            sign = Auction_User.objects.create(membership=mem,user=user,contact=con,address=add,dob=d2,image=i)
+            sign = Auction_User.objects.create(membership=mem,
+                user=user,
+                contact=con,
+                address=add,
+                dob=d2,
+                image=i)
         error = True
     d = {'error':error}
     return render(request,'signup.html',d)
@@ -453,7 +464,7 @@ def view_feedback(request):
             error = "pat"
     except:
         pro = Auction_User.objects.get(user=user1)
-    cat = Send_Feedback.objects.all()
+    cat = SendFeedback.objects.all()
     d = {'error':error,'pro':pro,'data':pro,'cat':cat,'count':count,'new2':new2}
     return render(request,'view_feedback.html',d)
 
@@ -518,7 +529,7 @@ def delete_subcategory(request,pid):
     return redirect('view_subcategory')
 
 def delete_feedback(request,pid):
-    cat = Send_Feedback.objects.get(id=pid)
+    cat = SendFeedback.objects.get(id=pid)
     cat.delete()
     return redirect('view_feedback')
 
@@ -561,7 +572,7 @@ def Add_Session_date(request):
     error = False
     if request.method == 'POST':
         d = request.POST['date']
-        cat1 = Session_date.objects.create(date=d)
+        cat1 = Sessiondate.objects.create(date=d)
         error = True
     d = {'error':error,'pro':pro,'data':pro,'count':count,'new2':new2}
     return render(request, 'Add_session_date.html',d)
@@ -583,7 +594,7 @@ def Edit_Session_date(request,pid):
     except:
         pro = Auction_User.objects.get(user=user1)
     error = False
-    ses = Session_date.objects.get(id=pid)
+    ses = Sessiondate.objects.get(id=pid)
     if request.method == 'POST':
         n = request.POST['date']
         ses.date = n
@@ -593,7 +604,7 @@ def Edit_Session_date(request,pid):
     return render(request, 'edit_session_date.html',d)
 
 def delete_session_date(request,pid):
-    cat = Session_date.objects.get(id=pid)
+    cat = Sessiondate.objects.get(id=pid)
     cat.delete()
     return redirect('view_session_date')
 
@@ -613,7 +624,7 @@ def view_session_date(request):
             error = "pat"
     except:
         pro = Auction_User.objects.get(user=user1)
-    cat = Session_date.objects.all()
+    cat = Sessiondate.objects.all()
     d = {'error':error,'pro':pro,'data':pro,'date1':cat,'count':count,'new2':new2}
     return render(request,'view_session_date.html',d)
 
@@ -634,12 +645,12 @@ def Add_Session_time(request):
     except:
         pro = Auction_User.objects.get(user=user1)
     error = False
-    sed = Session_date.objects.all()
+    sed = Sessiondate.objects.all()
     if request.method == 'POST':
         d = request.POST['date']
         t = request.POST['time']
-        d1 = Session_date.objects.get(date=d)
-        cat1 = Session_Time.objects.create(date=d1,time=t)
+        d1 = Sessiondate.objects.get(date=d)
+        cat1 = SessionTime.objects.create(date=d1,time=t)
         error = True
     d = {'error':error,'pro':pro,'data':pro,'sed':sed,'count':count,'new2':new2}
     return render(request, 'add_session_time.html',d)
@@ -778,7 +789,7 @@ def Winner2(request,pid):
     if data.membership.fee == "Unpaid":
         return redirect('Member_Payment_mode')
     pro2 = Product.objects.get(id=pid)
-    au = Aucted_Product.objects.get(product=pro2)
+    au = AuctedProduct.objects.get(product=pro2)
     re = Result.objects.get(result="Winner")
     pro1 = Participant.objects.get(aucted_product=au, result=re)
     d = {'pro': pro1, 'error': error}
@@ -830,12 +841,12 @@ def Edit_Session_time(request,pid):
     except:
         pro = Auction_User.objects.get(user=user1)
     error = False
-    sed = Session_date.objects.all()
-    sett = Session_Time.objects.get(id=pid)
+    sed = Sessiondate.objects.all()
+    sett = SessionTime.objects.get(id=pid)
     if request.method == 'POST':
         d = request.POST['date']
         t = request.POST['time']
-        sedd = Session_date.objects.get(id=d)
+        sedd = Sessiondate.objects.get(id=d)
         sett.date = sedd
         sett.time = t
         sett.save()
@@ -844,7 +855,7 @@ def Edit_Session_time(request,pid):
     return render(request, 'edit_session_time.html',d)
 
 def delete_session_time(request,pid):
-    cat = Session_Time.objects.get(id=pid)
+    cat = SessionTime.objects.get(id=pid)
     cat.delete()
     return redirect('view_session_time')
 
@@ -864,7 +875,7 @@ def view_session_time(request):
             error = "pat"
     except:
         pro = Auction_User.objects.get(user=user1)
-    cat = Session_Time.objects.all()
+    cat = SessionTime.objects.all()
     d = {'error':error,'pro':pro,'data':pro,'time1':cat,'count':count,'new2':new2}
     return render(request,'view_session_time.html',d)
 
@@ -902,7 +913,7 @@ def Feedback(request):
             pro = Bidder.objects.filter(user=user, contact=con).first()
         except:
             pro = Auction_User.objects.filter(user=user, contact=con).first()
-        Send_Feedback.objects.create(profile=user, date=d, message1=m)
+        SendFeedback.objects.create(profile=user, date=d, message1=m)
         terror = True
     d = {'pro': pro, 'date1': date1,'terror':terror,'error':error}
     return render(request, 'feedback.html', d)
@@ -923,11 +934,11 @@ def Add_Product(request):
     if data.membership.fee == "Unpaid":
         return redirect('Member_Payment_mode')
     date1 = datetime.date.today()
-    sed = Session_date.objects.all()
-    sett = Session_Time.objects.all()
+    sed = Sessiondate.objects.all()
+    sett = SessionTime.objects.all()
     cat = Category.objects.all()
-    scat = Sub_Category.objects.all()
-    sell = Auction_User.objects.get(user=user)
+    scat = SubCategory.objects.all()
+    sell = AuctionUser.objects.get(user=user)
     terror = False
     if request.method == "POST":
         c = request.POST['cat']
@@ -937,10 +948,15 @@ def Add_Product(request):
         i = request.FILES['image']
         sett1 = request.POST['time']
         sed1 = request.POST['date']
-        sub = Sub_Category.objects.get(id=s)
-        ses = Session_Time.objects.get(id=sett1)
+        sub = SubCategory.objects.get(id=s)
+        ses = SessionTime.objects.get(id=sett1)
         sta = Status.objects.get(status="pending")
-        pro1=Product.objects.create(status=sta,session=ses,category=sub,name=p, min_price=pr, images=i)
+        pro1=Product.objects.create(status=sta,
+            session=ses,
+            category=sub,
+            name=p,
+            min_price=pr,
+            images=i)
         auc=Aucted_Product.objects.create(product=pro1,user=sell)
         terror = True
     d = {'sed': sed,'sett':sett,'cat': cat,'scat':scat,'date1': date1,'terror':terror,'error':error}
@@ -953,14 +969,14 @@ def load_courses(request):
     # programming_id1 = request.GET.get('programming1')
     # print(programming_id,11111111111111111,programming_id1)
     courses = Sub_Category.objects.filter(category_id=programming_id).order_by('name')
-    # courses1 = Session_Time.objects.filter(date_id=programming_id1).order_by('name')
+    # courses1 = SessionTime.objects.filter(date_id=programming_id1).order_by('name')
     return render(request, 'courses_dropdown_list_options.html', {'courses': courses})
 
 def load_courses1(request):
     if not request.user.is_authenticated:
         return redirect('login_user')
     programming_id = request.GET.get('programming')
-    courses = Session_Time.objects.filter(date_id=programming_id)
+    courses = SessionTime.objects.filter(date_id=programming_id)
     return render(request, 'courses_dropdown_list_options1.html', {'courses': courses})
 
 
@@ -983,7 +999,7 @@ def view_auction(request,pid):
     terror = False
     if request.method == "POST":
         pro1 = Product.objects.get(id=pid)
-        auc = Aucted_Product.objects.get(product=pro1)
+        auc = AuctedProduct.objects.get(product=pro1)
         Participant.objects.create(user=data,aucted_product=auc)
         terror = True
     pid = 0
@@ -1246,7 +1262,7 @@ def Member_Google_pay(request):
         data = Auction_User.objects.get(user=user)
     terror=False
     if request.method=="POST":
-        mem = Member_fee.objects.get(fee="Paid")
+        mem = Memberfee.objects.get(fee="Paid")
         data.membership = mem
         data.save()
         terror=True
@@ -1289,7 +1305,7 @@ def Member_Credit_Card(request):
         data = Auction_User.objects.get(user=user)
     terror = False
     if request.method=="POST":
-        mem = Member_fee.objects.get(fee="Paid")
+        mem = Memberfee.objects.get(fee="Paid")
         data.membership = mem
         data.save()
         terror =True
@@ -1424,5 +1440,3 @@ def Change_status(request,pid):
 
 def winner_announced(request):
     return redirec('result')
-
-
